@@ -1,0 +1,42 @@
+<!-- chat.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Include Socket.IO client library -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div id="chatroom">
+        <h2>Welcome, {{ username }}!</h2>
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type a message">
+        <button id="sendBtn">Send</button>
+    </div>
+    <script>
+        const socket = io();
+        const messagesDiv = document.getElementById('messages');
+        const sendBtn = document.getElementById('sendBtn');
+        const messageInput = document.getElementById('messageInput');
+
+        // Send message to the server
+        sendBtn.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message) {
+                socket.emit('message', { username: "{{ username }}", text: message });
+                messageInput.value = '';
+            }
+        });
+
+        // Receive message from the server
+        socket.on('message', (data) => {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = `${data.username}: ${data.text}`;
+            messagesDiv.appendChild(messageElement);
+        });
+    </script>
+</body>
+</html>
